@@ -33,17 +33,11 @@
 export default {
   data() {
     return {
-      meetups: [
-        {
-          imageUrl: 'https://media.timeout.com/images/103444978/image.jpg',
-          id: 1,
-          title: 'Meetup in New York'
-        },
-        {
-          imageUrl: 'http://www.telegraph.co.uk/content/dam/Travel/Destinations/Europe/France/Paris/paris-attractions-xlarge.jpg',
-          id: 2,
-          title: 'Meetup in Paris'
-        }]
+    }
+  },
+  computed: {
+    meetups() {
+      return this.$store.getters.featuredMeetups
     }
   },
   methods: {

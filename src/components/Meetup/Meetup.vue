@@ -4,15 +4,15 @@
       <v-flex xs12>
         <v-card>
           <v-card-title>
-            <h6 class="primary--text">My Meetup</h6>
+            <h6 class="primary--text">{{meetup.title}}</h6>
           </v-card-title>
           <v-card-media
               height="400px"
-              src="https://media.timeout.com/images/103444978/image.jpg"
+              :src="meetup.imageUrl"
             ></v-card-media>
           <v-card-text>
             <div class="info--text">
-              17th July 2017 - Where it takes place
+              {{meetup.shortDate}} - Where it takes place
             </div>
             <div>
               lorum ipsum declorum
@@ -29,6 +29,19 @@
 </template>
 
 <script>
+import dateUtils from '@/dateUtils'
+
+export default {
+  props: ['id'],
+  computed: {
+    meetup() {
+      return this.$store.getters.loadedMeetup(parseInt(this.id))
+    },
+    shortDate() {
+      return dateUtils.toShortDate(this.meetup.date)
+    }
+  }
+}
 </script>
 
 <style scoped>
