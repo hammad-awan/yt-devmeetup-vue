@@ -1,6 +1,6 @@
 <template>
   <div>
-    The Sign In Page
+    <p>The Sign In Page</p>
   </div>
 </template>
 
