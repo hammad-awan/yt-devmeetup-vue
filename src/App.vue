@@ -2,7 +2,7 @@
   <v-app>
     <v-navigation-drawer temporary v-model="sideNav">
       <v-list>
-        <v-list-tile v-for="menuItem in menuItems" :key="menuItem.title" @click="onTileClick" router :to="menuItem.link">
+        <v-list-tile v-for="menuItem in menuItems" :key="menuItem.title" @click="onTileClick" :to="menuItem.link">
           <v-list-tile-action>
             <v-icon>
               {{menuItem.icon}}
