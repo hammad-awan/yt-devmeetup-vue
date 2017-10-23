@@ -12,7 +12,7 @@
             ></v-card-media>
           <v-card-text>
             <div class="info--text">
-              {{meetup.date.toLocaleString()}} - Where it takes place
+              {{meetup.date | dateFilter}} - Where it takes place
             </div>
             <div>
               {{meetup.description}}
