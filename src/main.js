@@ -7,6 +7,8 @@ import App from './App'
 import router from './router'
 import store from './store'
 import dateFilter from './filters/date'
+import * as firebase from 'firebase'
+import config from './config'
 
 Vue.use(Vuetify)
 Vue.filter('dateFilter', dateFilter)
@@ -18,5 +20,8 @@ new Vue({
   el: '#app',
   router,
   store,
-  render: h => h(App)
+  render: h => h(App),
+  created() {
+    firebase.initializeApp(config.firebase)
+  }
 })
