@@ -12,10 +12,10 @@
             ></v-card-media>
           <v-card-text>
             <div class="info--text">
-              {{meetup.shortDate}} - Where it takes place
+              {{meetup.date.toLocaleString()}} - Where it takes place
             </div>
             <div>
-              lorum ipsum declorum
+              {{meetup.description}}
             </div>
           </v-card-text>
           <v-card-actions>
@@ -29,16 +29,11 @@
 </template>
 
 <script>
-import dateUtils from '@/dateUtils'
-
 export default {
   props: ['id'],
   computed: {
     meetup() {
       return this.$store.getters.loadedMeetup(parseInt(this.id))
-    },
-    shortDate() {
-      return dateUtils.toShortDate(this.meetup.date)
     }
   }
 }

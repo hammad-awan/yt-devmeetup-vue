@@ -15,7 +15,7 @@
                 <v-card-title primary-title>
                   <div>
                     <h5 class="white--text mb-0">{{meetup.title}}</h5>
-                    <div>{{toShortDate(meetup.date)}}</div>
+                    <div>{{meetup.date.toLocaleString()}}</div>
                   </div>
                 </v-card-title>
                 <v-card-actions>
@@ -34,17 +34,10 @@
 </template>
 
 <script>
-import dateUtils from '@/dateUtils'
-
 export default {
   computed: {
     meetups() {
       return this.$store.getters.loadedMeetups
-    }
-  },
-  methods: {
-    toShortDate(date) {
-      return dateUtils.toShortDate(date)
     }
   }
 }

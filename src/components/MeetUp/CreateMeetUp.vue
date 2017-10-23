@@ -39,6 +39,21 @@
           </v-layout>
           <v-layout row>
             <v-flex xs12 sm6 offset-sm3>
+              <h4>Choose Date & Time</h4>
+            </v-flex>
+          </v-layout>
+          <v-layout row>
+            <v-flex xs12 sm6 offset-sm3>
+               <v-date-picker v-model="date"></v-date-picker>
+            </v-flex>
+          </v-layout>
+          <v-layout row mt-2>
+            <v-flex xs12 sm6 offset-sm3>
+               <v-time-picker v-model="time"></v-time-picker>
+            </v-flex>
+          </v-layout>
+          <v-layout row>
+            <v-flex xs12 sm6 offset-sm3>
               <v-btn class="primary" :disabled="!formIsValid" type="submit">Create Meetup</v-btn>
             </v-flex>
           </v-layout>
@@ -49,13 +64,17 @@
 </template>
 
 <script>
+import moment from 'moment'
+
 export default {
   data() {
     return {
       title: '',
       location: '',
       imageUrl: '',
-      description: ''
+      description: '',
+      date: null,
+      time: null
     }
   },
   computed: {
@@ -66,6 +85,11 @@ export default {
         this.checkNotEmpty(this.imageUrl) &&
         this.checkNotEmpty(this.description)
       )
+    },
+    dateTime() {
+      let now = new Date()
+      let strDate = this.date === null ? `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${this.time}` : `${this.date} ${this.time}`
+      return moment(strDate, 'YYYY-MM-DD h:ma').toDate()
     }
   },
   methods: {
@@ -83,7 +107,7 @@ export default {
         location: this.location,
         imageUrl: this.imageUrl,
         description: this.description,
-        date: new Date()
+        date: this.dateTime
       }
       this.$store.dispatch('createMeetup', meetup)
       this.$router.push({ name: 'Meetup', params: { id: meetup.id } })

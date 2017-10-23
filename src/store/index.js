@@ -10,14 +10,16 @@ export default new Vuex.Store({
         imageUrl: 'https://media.timeout.com/images/103444978/image.jpg',
         id: 1,
         title: 'Meetup in New York',
-        date: new Date(2017, 7, 17)
+        date: new Date(2017, 7, 17),
+        description: 'I love New York!'
       },
       {
         imageUrl:
           'http://www.telegraph.co.uk/content/dam/Travel/Destinations/Europe/France/Paris/paris-attractions-xlarge.jpg',
         id: 2,
         title: 'Meetup in Paris',
-        date: new Date(2017, 7, 19)
+        date: new Date(2017, 7, 19),
+        description: 'C\'est La Vie in Paris'
       }
     ],
     user: {
