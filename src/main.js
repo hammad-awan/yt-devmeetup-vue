@@ -25,5 +25,7 @@ new Vue({
   render: h => h(App),
   created() {
     firebase.initializeApp(config.firebase)
+
+    this.$store.dispatch('loadMeetups')
   }
 })

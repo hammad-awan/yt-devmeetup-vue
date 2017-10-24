@@ -96,21 +96,22 @@ export default {
     checkNotEmpty(str) {
       return str !== ''
     },
-    createMeetup() {
+    async createMeetup() {
       if (!this.formIsValid) {
         return
       }
 
       const meetup = {
-        id: this.$store.getters.loadedMeetups.length + 1,
         title: this.title,
         location: this.location,
         imageUrl: this.imageUrl,
         description: this.description,
         date: this.dateTime
       }
-      this.$store.dispatch('createMeetup', meetup)
-      this.$router.push({ name: 'Meetup', params: { id: meetup.id } })
+      const id = await this.$store.dispatch('createMeetup', meetup)
+      if (id) {
+        this.$router.push({ name: 'Meetup', params: { id: id } })
+      }
     }
   }
 }

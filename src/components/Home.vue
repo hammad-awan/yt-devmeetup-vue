@@ -8,9 +8,14 @@
         <v-btn large color="info" to="/meetups/new">Organize MeetUps</v-btn>
       </v-flex>
     </v-layout>
+    <v-layout>
+      <v-flex xs12 class="text-xs-center">
+        <v-progress-circular indeterminate class="primary--text" :width="7" :size="70" v-if="loading"></v-progress-circular>
+      </v-flex>
+    </v-layout>
     <v-layout row wrap>
       <v-flex xs12>
-        <v-carousel>
+        <v-carousel v-if="!loading">
           <v-carousel-item v-for="meetup in meetups" :src="meetup.imageUrl" :key="meetup.id" @click="onLoadMeetup(meetup.id)" :style="{cursor: 'pointer'}">
             <div class="title">
               {{meetup.title}}
@@ -30,6 +35,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   data() {
     return {
@@ -38,7 +45,8 @@ export default {
   computed: {
     meetups() {
       return this.$store.getters.featuredMeetups
-    }
+    },
+    ...mapGetters(['loading'])
   },
   methods: {
     onLoadMeetup(id) {

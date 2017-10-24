@@ -33,7 +33,7 @@ export default {
   props: ['id'],
   computed: {
     meetup() {
-      return this.$store.getters.loadedMeetup(parseInt(this.id))
+      return this.$store.getters.loadedMeetup(this.id)
     }
   }
 }

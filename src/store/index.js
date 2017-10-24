@@ -6,23 +6,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    loadedMeetups: [
-      {
-        imageUrl: 'https://media.timeout.com/images/103444978/image.jpg',
-        id: 1,
-        title: 'Meetup in New York',
-        date: new Date(2017, 7, 17),
-        description: 'I love New York!'
-      },
-      {
-        imageUrl:
-        'http://www.telegraph.co.uk/content/dam/Travel/Destinations/Europe/France/Paris/paris-attractions-xlarge.jpg',
-        id: 2,
-        title: 'Meetup in Paris',
-        date: new Date(2017, 7, 19),
-        description: 'C\'est La Vie in Paris'
-      }
-    ],
+    loadedMeetups: [],
     user: null,
     loading: false,
     error: null
@@ -42,20 +26,55 @@ export default new Vuex.Store({
     },
     setLoading(state, payload) {
       state.loading = payload
+    },
+    setMeetups(state, payload) {
+      state.loadedMeetups = payload
     }
   },
   actions: {
-    createMeetup({ commit }, payload) {
+    async loadMeetups({ commit }) {
+      commit('clearError')
+      commit('setLoading', true)
+      try {
+        const data = await firebase.database().ref('meetups').once('value')
+        const meetups = []
+        const obj = data.val()
+        for (let key in obj) {
+          const meetup = {
+            id: key,
+            date: new Date(obj[key].date),
+            description: obj[key].description,
+            imageUrl: obj[key].imageUrl,
+            location: obj[key].location,
+            title: obj[key].title
+          }
+          meetups.push(meetup)
+        }
+        commit('setMeetups', meetups)
+      } catch (error) {
+        commit('setError', error)
+      } finally {
+        commit('setLoading', false)
+      }
+    },
+    async createMeetup({ commit }, payload) {
       const meetup = {
-        id: payload.id,
         title: payload.title,
         location: payload.location,
         imageUrl: payload.imageUrl,
         description: payload.description,
-        date: payload.date
+        date: payload.date.toISOString()
       }
-      // Store to persistent source
-      commit('createMeetup', meetup)
+      try {
+        const data = await firebase.database().ref('meetups').push(meetup)
+        meetup.id = data.key
+        meetup.date = payload.date
+        commit('createMeetup', meetup)
+        return data.key
+      } catch (error) {
+        commit('setError', error)
+        return null
+      }
     },
     async signUpUser({ commit }, payload) {
       commit('clearError')
