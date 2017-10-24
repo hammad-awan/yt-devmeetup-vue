@@ -2,6 +2,13 @@
   <v-container>
     <v-layout row>
       <v-flex xs12 sm16 offset-sm3>
+        <app-alert @dismissed="onDismissed" v-if="error">
+          {{error.message}}
+        </app-alert>
+      </v-flex>
+    </v-layout>
+    <v-layout row>
+      <v-flex xs12 sm16 offset-sm3>
         <v-card>
           <v-card-text>
             <v-container>
@@ -27,7 +34,12 @@
                 </v-layout>
                 <v-layout row>
                   <v-flex xs12>
-                    <v-btn type="submit" primary>Sign Up</v-btn>
+                    <v-btn type="submit" color="primary" :loading="loading" @click.native="loader = 'loading'" :disabled="loading">
+                      Sign Up
+                      <span slot="loader" class="custom-loader">
+                        <v-icon light>cached</v-icon>
+                      </span>
+                    </v-btn>
                   </v-flex>
                 </v-layout>
               </form>
@@ -40,6 +52,8 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations } from 'vuex'
+
 export default {
   data() {
     return {
@@ -54,7 +68,11 @@ export default {
         email: this.email,
         password: this.password
       })
-    }
+    },
+    onDismissed() {
+      this.clearError()
+    },
+    ...mapMutations(['clearError'])
   },
   computed: {
     comparePasswords() {
@@ -63,9 +81,7 @@ export default {
       }
       return true
     },
-    user() {
-      return this.$store.getters.user
-    }
+    ...mapGetters(['user', 'error', 'loading'])
   },
   watch: {
     user(value) {
@@ -78,5 +94,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

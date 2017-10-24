@@ -9,9 +9,11 @@ import store from './store'
 import dateFilter from './filters/date'
 import * as firebase from 'firebase'
 import config from './config'
+import alert from '@/components/Shared/Alert'
 
 Vue.use(Vuetify)
 Vue.filter('dateFilter', dateFilter)
+Vue.component('app-alert', alert)
 
 Vue.config.productionTip = false
 
