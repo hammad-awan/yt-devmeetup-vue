@@ -38,36 +38,49 @@
 export default {
   data() {
     return {
-      sideNav: false,
-      menuItems: [{
-        icon: 'supervisor_account',
-        title: 'View Meetups',
-        link: '/meetups'
-      },
-      {
-        icon: 'room',
-        title: 'Organize Meetup',
-        link: '/meetups/new'
-      },
-      {
-        icon: 'person',
-        title: 'Profile',
-        link: '/profile'
-      },
-      {
-        icon: 'face',
-        title: 'Sign Up',
-        link: '/signup'
-      },
-      {
-        icon: 'lock_open',
-        title: 'Sign In',
-        link: '/signin'
-      }]
+      sideNav: false
     }
   },
   methods: {
     onTileClick() {
+    }
+  },
+  computed: {
+    isUserAuthenticated() {
+      return !!this.$store.getters.user
+    },
+    menuItems() {
+      let menuItems
+      if (this.isUserAuthenticated) {
+        menuItems = [{
+          icon: 'supervisor_account',
+          title: 'View Meetups',
+          link: '/meetups'
+        },
+        {
+          icon: 'room',
+          title: 'Organize Meetup',
+          link: '/meetups/new'
+        },
+        {
+          icon: 'person',
+          title: 'Profile',
+          link: '/profile'
+        }]
+      } else {
+        menuItems = [
+          {
+            icon: 'face',
+            title: 'Sign Up',
+            link: '/signup'
+          },
+          {
+            icon: 'lock_open',
+            title: 'Sign In',
+            link: '/signin'
+          }]
+      }
+      return menuItems
     }
   }
 }

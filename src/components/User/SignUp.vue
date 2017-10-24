@@ -5,7 +5,7 @@
         <v-card>
           <v-card-text>
             <v-container>
-              <form>
+              <form @submit.prevent="onSignUp">
                 <v-layout row>
                   <v-flex xs12>
                     <v-text-field id="email" name="email" label="Email" type="email" v-model="email" required>
@@ -49,7 +49,12 @@ export default {
     }
   },
   methods: {
-    onSignUp() {}
+    onSignUp() {
+      this.$store.dispatch('signUpUser', {
+        email: this.email,
+        password: this.password
+      })
+    }
   },
   computed: {
     comparePasswords() {
@@ -57,6 +62,16 @@ export default {
         return 'Passwords do not match'
       }
       return true
+    },
+    user() {
+      return this.$store.getters.user
+    }
+  },
+  watch: {
+    user(value) {
+      if (value) {
+        this.$router.push({ name: 'Home' })
+      }
     }
   }
 }

@@ -1,10 +1,67 @@
 <template>
-  <div>
-    <p>The Sign In Page</p>
-  </div>
+  <v-container>
+    <v-layout row>
+      <v-flex xs12 sm16 offset-sm3>
+        <v-card>
+          <v-card-text>
+            <v-container>
+              <form @submit.prevent="onSignIn">
+                <v-layout row>
+                  <v-flex xs12>
+                    <v-text-field id="email" name="email" label="Email" type="email" v-model="email" required>
+                    </v-text-field>
+                  </v-flex>
+                </v-layout>
+                <v-layout row>
+                  <v-flex xs12>
+                    <v-text-field id="password" name="password" label="Password" type="password" v-model="password" required>
+                    </v-text-field>
+                  </v-flex>
+                </v-layout>
+                <v-layout row>
+                  <v-flex xs12>
+                    <v-btn type="submit" primary>Sign In</v-btn>
+                  </v-flex>
+                </v-layout>
+              </form>
+            </v-container>
+          </v-card-text>
+        </v-card>
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>
+export default {
+  data() {
+    return {
+      email: '',
+      password: '',
+      confirmPassword: ''
+    }
+  },
+  methods: {
+    onSignIn() {
+      this.$store.dispatch('signInUser', {
+        email: this.email,
+        password: this.password
+      })
+    }
+  },
+  computed: {
+    user() {
+      return this.$store.getters.user
+    }
+  },
+  watch: {
+    user(value) {
+      if (value) {
+        this.$router.push({ name: 'Home' })
+      }
+    }
+  }
+}
 </script>
 
 <style scoped>

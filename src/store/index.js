@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import * as firebase from 'firebase'
 
 Vue.use(Vuex)
 
@@ -15,21 +16,21 @@ export default new Vuex.Store({
       },
       {
         imageUrl:
-          'http://www.telegraph.co.uk/content/dam/Travel/Destinations/Europe/France/Paris/paris-attractions-xlarge.jpg',
+        'http://www.telegraph.co.uk/content/dam/Travel/Destinations/Europe/France/Paris/paris-attractions-xlarge.jpg',
         id: 2,
         title: 'Meetup in Paris',
         date: new Date(2017, 7, 19),
         description: 'C\'est La Vie in Paris'
       }
     ],
-    user: {
-      id: 'awanh',
-      registeredMeetups: [1, 2]
-    }
+    user: null
   },
   mutations: {
     createMeetup(state, payload) {
       state.loadedMeetups.push(payload)
+    },
+    setUser(state, payload) {
+      state.user = payload
     }
   },
   actions: {
@@ -44,6 +45,28 @@ export default new Vuex.Store({
       }
       // Store to persistent source
       commit('createMeetup', meetup)
+    },
+    async signUpUser({ commit }, payload) {
+      try {
+        const user = await firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
+        commit('setUser', {
+          id: user.uid,
+          registeredMeetups: []
+        })
+      } catch (error) {
+        console.log(`Firebase error: ${error}`)
+      }
+    },
+    async signInUser({ commit }, payload) {
+      try {
+        const user = await firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
+        commit('setUser', {
+          id: user.uid,
+          registeredMeetups: []
+        })
+      } catch (error) {
+        console.log(`Firebase error: ${error}`)
+      }
     }
   },
   getters: {
@@ -61,6 +84,9 @@ export default new Vuex.Store({
           return meetup.id === meetupId
         })
       }
+    },
+    user(state) {
+      return state.user
     }
   }
 })
