@@ -1,18 +1,18 @@
 <template>
   <v-container>
     <v-layout row>
-      <v-flex xs12 sm16 offset-sm3>
+      <v-flex xs12 sm6 offset-sm3>
         <app-alert @dismissed="onDismissed" v-if="error">
           {{error.message}}
         </app-alert>
       </v-flex>
     </v-layout>
     <v-layout row>
-      <v-flex xs12 sm16 offset-sm3>
+      <v-flex xs12 sm6 offset-sm3>
         <v-card>
           <v-card-text>
             <v-container>
-              <form @submit.prevent="onSignIn">
+              <form @submit.prevent="signIn">
                 <v-layout row>
                   <v-flex xs12>
                     <v-text-field id="email" name="email" label="Email" type="email" v-model="email" required>
@@ -27,7 +27,7 @@
                 </v-layout>
                 <v-layout row>
                   <v-flex xs12>
-                    <v-btn type="submit" color="primary" :loading="loading" @click.native="loader = 'loading'" :disabled="loading">
+                    <v-btn type="submit" color="primary" :loading="signingIn" @click.native="loader = 'signingIn'" :disabled="signingIn">
                       Sign In
                       <span slot="loader" class="custom-loader">
                         <v-icon light>cached</v-icon>
@@ -45,36 +45,41 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   data() {
     return {
       email: '',
       password: '',
-      confirmPassword: ''
+      signingIn: false,
+      error: null
     }
   },
   methods: {
-    onSignIn() {
-      this.$store.dispatch('signInUser', {
-        email: this.email,
-        password: this.password
-      })
+    async signIn() {
+      try {
+        this.error = null
+        this.signingIn = true
+        await this.$store.dispatch('signIn', {
+          email: this.email,
+          password: this.password
+        })
+      } catch (error) {
+        this.error = error
+      } finally {
+        this.signingIn = false
+      }
     },
     onDismissed() {
-      this.clearError()
-    },
-    ...mapMutations(['clearError'])
+      this.error = null
+    }
   },
   computed: {
-    user() {
-      return this.$store.getters.user
-    },
-    ...mapGetters(['user', 'error', 'loading'])
+    ...mapGetters(['isUserAuthenticated'])
   },
   watch: {
-    user(value) {
+    isUserAuthenticated(value) {
       if (value) {
         this.$router.push({ name: 'Home' })
       }

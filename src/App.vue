@@ -14,6 +14,18 @@
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
+        <v-list-tile v-if="isUserAuthenticated" @click="logout">
+          <v-list-tile-action>
+            <v-icon>
+              exit_to_app
+            </v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>
+              Logout
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
       </v-list>
     </v-navigation-drawer>
     <v-toolbar class="primary">
@@ -26,6 +38,10 @@
       <v-toolbar-items v-for="menuItem in menuItems" :key="menuItem.title" class="hidden-xs-only">
         <v-icon>{{menuItem.icon}}</v-icon>
         <v-btn flat :to="menuItem.link">{{menuItem.title}}</v-btn></v-btn>
+      </v-toolbar-items>
+      <v-toolbar-items v-if="isUserAuthenticated">
+        <v-icon>exit_to_app</v-icon>
+        <v-btn flat @click="logout">Logout</v-btn></v-btn>
       </v-toolbar-items>
     </v-toolbar>
     <main>
@@ -42,7 +58,9 @@ export default {
     }
   },
   methods: {
-    onTileClick() {
+    onTileClick() {},
+    async logout() {
+      await this.$store.dispatch('logout')
     }
   },
   computed: {
@@ -52,21 +70,23 @@ export default {
     menuItems() {
       let menuItems
       if (this.isUserAuthenticated) {
-        menuItems = [{
-          icon: 'supervisor_account',
-          title: 'View Meetups',
-          link: '/meetups'
-        },
-        {
-          icon: 'room',
-          title: 'Organize Meetup',
-          link: '/meetups/new'
-        },
-        {
-          icon: 'person',
-          title: 'Profile',
-          link: '/profile'
-        }]
+        menuItems = [
+          {
+            icon: 'supervisor_account',
+            title: 'View Meetups',
+            link: '/meetups'
+          },
+          {
+            icon: 'room',
+            title: 'Organize Meetup',
+            link: '/meetups/new'
+          },
+          {
+            icon: 'person',
+            title: 'Profile',
+            link: '/profile'
+          }
+        ]
       } else {
         menuItems = [
           {
@@ -78,7 +98,8 @@ export default {
             icon: 'lock_open',
             title: 'Sign In',
             link: '/signin'
-          }]
+          }
+        ]
       }
       return menuItems
     }

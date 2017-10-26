@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import * as firebase from 'firebase'
+import authenticationController from '@/controllers/firebase/authenticationController'
 
 Vue.use(Vuex)
 
@@ -32,79 +32,23 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    async loadMeetups({ commit }) {
-      commit('clearError')
-      commit('setLoading', true)
-      try {
-        const data = await firebase.database().ref('meetups').once('value')
-        const meetups = []
-        const obj = data.val()
-        for (let key in obj) {
-          const meetup = {
-            id: key,
-            date: new Date(obj[key].date),
-            description: obj[key].description,
-            imageUrl: obj[key].imageUrl,
-            location: obj[key].location,
-            title: obj[key].title
-          }
-          meetups.push(meetup)
-        }
-        commit('setMeetups', meetups)
-      } catch (error) {
-        commit('setError', error)
-      } finally {
-        commit('setLoading', false)
-      }
+    async register({ commit }, payload) {
+      const user = await authenticationController.register(payload)
+      commit('setUser', user)
     },
-    async createMeetup({ commit }, payload) {
-      const meetup = {
-        title: payload.title,
-        location: payload.location,
-        imageUrl: payload.imageUrl,
-        description: payload.description,
-        date: payload.date.toISOString()
-      }
-      try {
-        const data = await firebase.database().ref('meetups').push(meetup)
-        meetup.id = data.key
-        meetup.date = payload.date
-        commit('createMeetup', meetup)
-        return data.key
-      } catch (error) {
-        commit('setError', error)
-        return null
-      }
+    async signIn({ commit }, payload) {
+      const user = await authenticationController.signIn(payload)
+      commit('setUser', user)
     },
-    async signUpUser({ commit }, payload) {
-      commit('clearError')
-      commit('setLoading', true)
-      try {
-        const user = await firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
-        commit('setUser', {
-          id: user.uid,
-          registeredMeetups: []
-        })
-      } catch (error) {
-        commit('setError', error)
-      } finally {
-        commit('setLoading', false)
-      }
+    autoSignIn({ commit }, payload) {
+      commit('setUser', {
+        id: payload.uid,
+        registeredMeetups: []
+      })
     },
-    async signInUser({ commit }, payload) {
-      commit('clearError')
-      commit('setLoading', true)
-      try {
-        const user = await firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
-        commit('setUser', {
-          id: user.uid,
-          registeredMeetups: []
-        })
-      } catch (error) {
-        commit('setError', error)
-      } finally {
-        commit('setLoading', false)
-      }
+    async logout({ commit }) {
+      await authenticationController.logout()
+      commit('setUser', null)
     }
   },
   getters: {
@@ -125,6 +69,9 @@ export default new Vuex.Store({
     },
     user(state) {
       return state.user
+    },
+    isUserAuthenticated(state, getters) {
+      return !!getters.user
     },
     error(state) {
       return state.error

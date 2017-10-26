@@ -6,6 +6,13 @@
       </v-flex>
     </v-layout>
     <v-layout row>
+      <v-flex xs12 sm6 offset-sm3>
+        <app-alert @dismissed="onDismissed" v-if="error">
+          {{error.message}}
+        </app-alert>
+      </v-flex>
+    </v-layout>
+    <v-layout row>
       <v-flex xs12>
         <form @submit.prevent="createMeetup">
           <v-layout row>
@@ -54,7 +61,7 @@
           </v-layout>
           <v-layout row>
             <v-flex xs12 sm6 offset-sm3>
-              <v-btn class="primary" :disabled="!formIsValid" type="submit">Create Meetup</v-btn>
+              <v-btn class="primary" :disabled="!formIsValid && !creating" type="submit">Create Meetup</v-btn>
             </v-flex>
           </v-layout>
         </form>
@@ -65,6 +72,8 @@
 
 <script>
 import moment from 'moment'
+import { mapGetters } from 'vuex'
+import meetupsDao from '@/persistence/firebase/meetupsDao'
 
 export default {
   data() {
@@ -74,7 +83,9 @@ export default {
       imageUrl: '',
       description: '',
       date: null,
-      time: null
+      time: null,
+      error: null,
+      creating: false
     }
   },
   computed: {
@@ -88,8 +99,20 @@ export default {
     },
     dateTime() {
       let now = new Date()
-      let strDate = this.date === null ? `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${this.time}` : `${this.date} ${this.time}`
+      let strDate =
+        this.date === null
+          ? `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${this
+              .time}`
+          : `${this.date} ${this.time}`
       return moment(strDate, 'YYYY-MM-DD h:ma').toDate()
+    },
+    ...mapGetters(['isUserAuthenticated'])
+  },
+  watch: {
+    async isUserAuthenticated(value) {
+      if (!value) {
+        this.$route.push({ name: 'SignIn' })
+      }
     }
   },
   methods: {
@@ -100,18 +123,26 @@ export default {
       if (!this.formIsValid) {
         return
       }
-
-      const meetup = {
+      let meetup = {
         title: this.title,
         location: this.location,
         imageUrl: this.imageUrl,
         description: this.description,
         date: this.dateTime
       }
-      const id = await this.$store.dispatch('createMeetup', meetup)
-      if (id) {
-        this.$router.push({ name: 'Meetup', params: { id: id } })
+      try {
+        this.error = null
+        this.creating = true
+        meetup = await meetupsDao.createMeetup(meetup)
+        this.$router.push({ name: 'Meetup', params: { id: meetup.id } })
+      } catch (error) {
+        this.error = error
+      } finally {
+        this.creating = false
       }
+    },
+    onDismissed() {
+      this.error = null
     }
   }
 }

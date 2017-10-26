@@ -1,5 +1,12 @@
 <template>
   <v-container>
+    <v-layout row>
+      <v-flex xs12 sm6 offset-sm3>
+        <app-alert @dismissed="onDismissed" v-if="error">
+          {{error.message}}
+        </app-alert>
+      </v-flex>
+    </v-layout>
     <v-layout row wrap>
       <v-flex xs12 sm10 md8 offset-sm1 offset-md2>
         <v-card class="info mb-2" v-for="meetup in meetups" :key="meetup.id">
@@ -34,11 +41,50 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+import meetupsDao from '@/persistence/firebase/meetupsDao'
+
 export default {
-  computed: {
-    meetups() {
-      return this.$store.getters.loadedMeetups
+  data() {
+    return {
+      meetups: [],
+      error: null,
+      loading: false
     }
+  },
+  methods: {
+    async getMeetups() {
+      try {
+        this.error = null
+        this.loading = true
+        this.meetups = await meetupsDao.getMeetups()
+      } catch (error) {
+        this.error = error
+      } finally {
+        this.loading = false
+      }
+    },
+    onDismissed() {
+      this.error = null
+    }
+  },
+  computed: {
+    ...mapGetters(['isUserAuthenticated'])
+  },
+  watch: {
+    async isUserAuthenticated(value) {
+      if (!value) {
+        this.meetups = []
+      } else {
+        await this.getMeetups()
+      }
+    }
+  },
+  async created() {
+    if (!this.isUserAuthenticated) {
+      return
+    }
+    await this.getMeetups()
   }
 }
 </script>

@@ -1,5 +1,12 @@
 <template>
-  <v-container>
+  <v-container v-if="isUserAuthenticated">
+    <v-layout row>
+      <v-flex xs12 sm6 offset-sm3>
+        <app-alert @dismissed="onDismissed" v-if="error">
+          {{error.message}}
+        </app-alert>
+      </v-flex>
+    </v-layout>
     <v-layout row wrap class="mb-2">
       <v-flex xs12 sm6 class="text-xs-center text-sm-right">
         <v-btn large color="info" to="/meetups">Explore Meetups</v-btn>
@@ -10,12 +17,12 @@
     </v-layout>
     <v-layout>
       <v-flex xs12 class="text-xs-center">
-        <v-progress-circular indeterminate class="primary--text" :width="7" :size="70" v-if="loading"></v-progress-circular>
+        <v-progress-circular indeterminate class="primary--text" :width="7" :size="70" v-if="loading && !hasMeetups"></v-progress-circular>
       </v-flex>
     </v-layout>
     <v-layout row wrap>
       <v-flex xs12>
-        <v-carousel v-if="!loading">
+        <v-carousel v-if="!loading && hasMeetups">
           <v-carousel-item v-for="meetup in meetups" :src="meetup.imageUrl" :key="meetup.id" @click="onLoadMeetup(meetup.id)" :style="{cursor: 'pointer'}">
             <div class="title">
               {{meetup.title}}
@@ -36,22 +43,55 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import meetupsDao from '@/persistence/firebase/meetupsDao'
 
 export default {
   data() {
     return {
+      meetups: [],
+      loading: false,
+      error: null
+    }
+  },
+  methods: {
+    async getMeetups() {
+      try {
+        this.error = null
+        this.loading = true
+        this.meetups = await meetupsDao.getMeetups(5)
+      } catch (error) {
+        this.error = error
+      } finally {
+        this.loading = false
+      }
+    },
+    onLoadMeetup(id) {
+      this.$router.push('/meetups/' + id)
+    },
+    onDismissed() {
+      this.error = null
     }
   },
   computed: {
-    meetups() {
-      return this.$store.getters.featuredMeetups
-    },
-    ...mapGetters(['loading'])
-  },
-  methods: {
-    onLoadMeetup(id) {
-      this.$router.push('/meetups/' + id)
+    ...mapGetters(['isUserAuthenticated']),
+    hasMeetups() {
+      return this.meetups.length > 0
     }
+  },
+  watch: {
+    async isUserAuthenticated(value) {
+      if (!value) {
+        this.meetups = []
+      } else {
+        await this.getMeetups()
+      }
+    }
+  },
+  async created() {
+    if (!this.isUserAuthenticated) {
+      return
+    }
+    await this.getMeetups()
   }
 }
 </script>
