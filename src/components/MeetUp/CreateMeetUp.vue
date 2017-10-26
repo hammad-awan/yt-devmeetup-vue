@@ -111,7 +111,7 @@ export default {
   watch: {
     async isUserAuthenticated(value) {
       if (!value) {
-        this.$route.push({ name: 'SignIn' })
+        this.$router.push({ name: 'SignIn' })
       }
     }
   },

@@ -21,7 +21,8 @@ export default new Router({
     {
       path: '/meetups',
       name: 'Meetups',
-      component: Meetups
+      component: Meetups,
+      beforeEnter: authGuard
     },
     {
       path: '/meetups/new',
@@ -33,12 +34,14 @@ export default new Router({
       path: '/meetups/:id',
       name: 'Meetup',
       props: true,
-      component: Meetup
+      component: Meetup,
+      beforeEnter: authGuard
     },
     {
       path: '/profile',
       name: 'Profile',
-      component: Profile
+      component: Profile,
+      beforeEnter: authGuard
     },
     {
       path: '/signin',

@@ -70,9 +70,7 @@ export default {
   watch: {
     async isUserAuthenticated(value) {
       if (!value) {
-        this.meetup = null
-      } else {
-        await this.getMeetup()
+        this.$router.push({ name: 'SignIn' })
       }
     }
   },

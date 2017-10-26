@@ -44,6 +44,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import meetupsDao from '@/persistence/firebase/meetupsDao'
+import * as firebase from 'firebase'
 
 export default {
   data() {
@@ -88,10 +89,17 @@ export default {
     }
   },
   async created() {
-    if (!this.isUserAuthenticated) {
-      return
+    if (this.isUserAuthenticated) {
+      await this.getMeetups()
+    } else {
+      firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+          this.$store.dispatch('autoSignIn', user)
+        } else {
+          this.$router.push({ name: 'SignIn' })
+        }
+      })
     }
-    await this.getMeetups()
   }
 }
 </script>
