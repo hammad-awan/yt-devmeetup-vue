@@ -59,7 +59,7 @@ export default {
       try {
         this.error = null
         this.loading = true
-        this.meetups = await meetupsDao.getMeetups(5)
+        this.meetups = await meetupsDao.getMeetups(this.user, 5)
       } catch (error) {
         this.error = error
       } finally {
@@ -67,14 +67,14 @@ export default {
       }
     },
     onLoadMeetup(id) {
-      this.$router.push('/meetups/' + id)
+      this.$router.push(`/meetups/${id}`)
     },
     onDismissed() {
       this.error = null
     }
   },
   computed: {
-    ...mapGetters(['isUserAuthenticated']),
+    ...mapGetters(['isUserAuthenticated', 'user']),
     hasMeetups() {
       return this.meetups.length > 0
     }

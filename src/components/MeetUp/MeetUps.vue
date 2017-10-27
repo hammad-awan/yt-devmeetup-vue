@@ -57,7 +57,7 @@ export default {
       try {
         this.error = null
         this.loading = true
-        this.meetups = await meetupsDao.getMeetups()
+        this.meetups = await meetupsDao.getMeetups(this.user)
       } catch (error) {
         this.error = error
       } finally {
@@ -69,7 +69,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isUserAuthenticated'])
+    ...mapGetters(['isUserAuthenticated', 'user'])
   },
   watch: {
     async isUserAuthenticated(value) {

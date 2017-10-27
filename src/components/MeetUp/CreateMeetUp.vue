@@ -106,7 +106,7 @@ export default {
           : `${this.date} ${this.time}`
       return moment(strDate, 'YYYY-MM-DD h:ma').toDate()
     },
-    ...mapGetters(['isUserAuthenticated'])
+    ...mapGetters(['isUserAuthenticated', 'user'])
   },
   watch: {
     async isUserAuthenticated(value) {
@@ -128,7 +128,8 @@ export default {
         location: this.location,
         imageUrl: this.imageUrl,
         description: this.description,
-        date: this.dateTime
+        date: this.dateTime,
+        creatorId: this.user.id
       }
       try {
         this.error = null

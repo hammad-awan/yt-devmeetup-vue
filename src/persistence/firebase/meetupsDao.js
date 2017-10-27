@@ -8,17 +8,20 @@ function transformFirebaseMeetup(meetupData) {
     description: obj.description,
     imageUrl: obj.imageUrl,
     location: obj.location,
-    title: obj.title
+    title: obj.title,
+    creatorId: obj.creatorId
   }
   return meetup
 }
 
 export default {
-  getMeetups(limit) {
+  getMeetups(user, limit) {
+    console.log(user)
     let query = firebase
       .database()
       .ref('meetups')
-      .orderByChild('date')
+      .orderByChild('creatorId')
+      .equalTo(user.id)
     if (limit) {
       query = query.limitToFirst(limit)
     }
@@ -27,7 +30,9 @@ export default {
       const meetup = transformFirebaseMeetup(data)
       meetups.push(meetup)
     })
-    return meetups
+    return meetups.sort((m1, m2) => {
+      return m1.date > m2.date
+    })
   },
   async createMeetup(meetupData) {
     const meetup = {
@@ -35,7 +40,8 @@ export default {
       location: meetupData.location,
       imageUrl: meetupData.imageUrl,
       description: meetupData.description,
-      date: meetupData.date.toISOString()
+      date: meetupData.date.toISOString(),
+      creatorId: meetupData.creatorId
     }
     const data = await firebase
       .database()
