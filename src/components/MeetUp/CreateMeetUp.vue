@@ -61,7 +61,12 @@
           </v-layout>
           <v-layout row>
             <v-flex xs12 sm6 offset-sm3>
-              <v-btn class="primary" :disabled="!formIsValid && !creating" type="submit">Create Meetup</v-btn>
+              <v-btn type="submit" color="primary" :loading="creating" @click.native="loader = 'creating'" :disabled="!formIsValid && creating">
+                Create Meetup
+                  <span slot="loader" class="custom-loader">
+                    <v-icon light>cached</v-icon>
+                  </span>
+                </v-btn>
             </v-flex>
           </v-layout>
         </form>
