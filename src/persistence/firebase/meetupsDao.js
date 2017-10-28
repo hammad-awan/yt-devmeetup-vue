@@ -16,7 +16,6 @@ function transformFirebaseMeetup(meetupData) {
 
 export default {
   getMeetups(user, limit) {
-    console.log(user)
     let query = firebase
       .database()
       .ref('meetups')
@@ -38,15 +37,27 @@ export default {
     const meetup = {
       title: meetupData.title,
       location: meetupData.location,
-      imageUrl: meetupData.imageUrl,
       description: meetupData.description,
       date: meetupData.date.toISOString(),
       creatorId: meetupData.creatorId
     }
-    const data = await firebase
+    let data = await firebase
       .database()
       .ref('meetups')
       .push(meetup)
+    const fileName = meetupData.image.name
+    const ext = fileName.slice(fileName.lastIndexOf('.'))
+    const fileData = await firebase
+      .storage()
+      .ref(`meetups/${data.key}.${ext}`)
+      .put(meetupData.image)
+    const imageUrl = fileData.metadata.downloadURLs[0]
+    await firebase
+      .database()
+      .ref('meetups')
+      .child(data.key)
+      .update({ imageUrl: imageUrl })
+    meetup.imageUrl = imageUrl
     meetup.id = data.key
     meetup.date = data.date
     return meetup
@@ -57,7 +68,6 @@ export default {
       .ref('meetups')
       .child(id)
       .once('value')
-    console.log(data)
     return transformFirebaseMeetup(data)
   }
 }
