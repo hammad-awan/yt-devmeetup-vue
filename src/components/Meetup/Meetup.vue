@@ -19,7 +19,7 @@
             ></v-card-media>
           <v-card-text>
             <div class="info--text">
-              {{meetup.date | dateFilter}} - Where it takes place
+              {{meetup.date | dateFilter}} - {{meetup.location}}
             </div>
             <div>
               {{meetup.description}}
