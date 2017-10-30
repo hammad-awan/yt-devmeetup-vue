@@ -51,6 +51,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   data() {
     return {
@@ -63,10 +65,15 @@ export default {
       await this.$store.dispatch('logout')
     }
   },
+  watch: {
+    isUserAuthenticated(value) {
+      if (!value) {
+        this.$router.push({ name: 'SignIn' })
+      }
+    }
+  },
   computed: {
-    isUserAuthenticated() {
-      return !!this.$store.getters.user
-    },
+    ...mapGetters(['isUserAuthenticated']),
     menuItems() {
       let menuItems
       if (this.isUserAuthenticated) {

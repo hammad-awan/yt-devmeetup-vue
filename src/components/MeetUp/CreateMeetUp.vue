@@ -114,13 +114,6 @@ export default {
     },
     ...mapGetters(['isUserAuthenticated', 'user'])
   },
-  watch: {
-    async isUserAuthenticated(value) {
-      if (!value) {
-        this.$router.push({ name: 'SignIn' })
-      }
-    }
-  },
   methods: {
     checkNotEmpty(str) {
       return str !== ''

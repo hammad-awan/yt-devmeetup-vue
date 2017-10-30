@@ -71,13 +71,6 @@ export default {
   computed: {
     ...mapGetters(['isUserAuthenticated', 'user'])
   },
-  watch: {
-    async isUserAuthenticated(value) {
-      if (!value) {
-        this.$router.push({ name: 'SignIn' })
-      }
-    }
-  },
   async created() {
     if (!this.isUserAuthenticated) {
       return
