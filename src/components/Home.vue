@@ -78,6 +78,13 @@ export default {
       return this.meetups.length > 0
     }
   },
+  watch: {
+    async isUserAuthenticated(value) {
+      if (value) {
+        await this.getMeetups()
+      }
+    }
+  },
   async created() {
     if (!this.isUserAuthenticated) {
       return

@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import Home from '@/components/Home'
 import Meetups from '@/components/Meetup/Meetups'
 import Meetup from '@/components/Meetup/Meetup'
-import CreateMeetup from '@/components/Meetup/CreateMeetup'
+import SaveMeetup from '@/components/Meetup/SaveMeetup'
 import Profile from '@/components/User/Profile'
 import SignIn from '@/components/User/SignIn'
 import SignUp from '@/components/User/SignUp'
@@ -27,7 +27,14 @@ export default new Router({
     {
       path: '/meetups/new',
       name: 'CreateMeetup',
-      component: CreateMeetup,
+      component: SaveMeetup,
+      beforeEnter: authGuard
+    },
+    {
+      path: '/meetups/edit/:id',
+      props: true,
+      name: 'EditMeetup',
+      component: SaveMeetup,
       beforeEnter: authGuard
     },
     {
