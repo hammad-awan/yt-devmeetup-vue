@@ -7,6 +7,11 @@
         </app-alert>
       </v-flex>
     </v-layout>
+    <v-layout>
+      <v-flex xs12 class="text-xs-center">
+        <v-progress-circular indeterminate class="primary--text" :width="7" :size="70" v-if="loading"></v-progress-circular>
+      </v-flex>
+    </v-layout>
     <v-layout row wrap>
       <v-flex xs12 sm10 md8 offset-sm1 offset-md2>
         <v-card class="info mb-2" v-for="meetup in meetups" :key="meetup.id">
@@ -57,7 +62,7 @@ export default {
       try {
         this.error = null
         this.loading = true
-        this.meetups = await meetupsDao.getMeetups(this.user)
+        this.meetups = await meetupsDao.getMeetups()
       } catch (error) {
         this.error = error
       } finally {

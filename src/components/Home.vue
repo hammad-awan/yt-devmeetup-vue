@@ -17,7 +17,7 @@
     </v-layout>
     <v-layout>
       <v-flex xs12 class="text-xs-center">
-        <v-progress-circular indeterminate class="primary--text" :width="7" :size="70" v-if="loading && !hasMeetups"></v-progress-circular>
+        <v-progress-circular indeterminate class="primary" :width="7" :size="70" v-if="loading && !hasMeetups"></v-progress-circular>
       </v-flex>
     </v-layout>
     <v-layout row wrap>
@@ -58,7 +58,7 @@ export default {
       try {
         this.error = null
         this.loading = true
-        this.meetups = await meetupsDao.getMeetups(this.user, 5)
+        this.meetups = await meetupsDao.getMeetups(5)
       } catch (error) {
         this.error = error
       } finally {

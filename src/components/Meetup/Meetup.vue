@@ -7,11 +7,22 @@
         </app-alert>
       </v-flex>
     </v-layout>
-    <v-layout row wrap v-if="meetup">
+    <v-layout>
+      <v-flex xs12 class="text-xs-center">
+        <v-progress-circular indeterminate class="primary--text" :width="7" :size="70" v-if="loading"></v-progress-circular>
+      </v-flex>
+    </v-layout>
+    <v-layout row wrap v-if="!loading && meetup">
       <v-flex xs12>
         <v-card>
           <v-card-title>
             <h6 class="primary--text">{{meetup.title}}</h6>
+            <template v-if="isUserCreator">
+              <v-spacer></v-spacer>
+              <v-btn class="primary" fab accent :to="{name: 'EditMeetup', params: {id: id}}">
+                <v-icon>edit</v-icon>
+              </v-btn>
+            </template>
           </v-card-title>
           <v-card-media
               height="400px"
@@ -28,7 +39,6 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn class="primary">Register</v-btn>
-            <v-btn class="primary" :to="{name: 'EditMeetup', params: {id: id}}">Edit</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -66,7 +76,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isUserAuthenticated'])
+    ...mapGetters(['isUserAuthenticated', 'user']),
+    isUserCreator() {
+      return this.user.id === this.meetup.creatorId
+    }
   },
   async created() {
     if (!this.isUserAuthenticated) {

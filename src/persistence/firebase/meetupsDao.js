@@ -16,12 +16,11 @@ function transformFirebaseMeetup(meetupData) {
 }
 
 export default {
-  getMeetups(user, limit) {
+  getMeetups(limit) {
     let query = firebase
       .database()
       .ref('meetups')
       .orderByChild('creatorId')
-      .equalTo(user.id)
     if (limit) {
       query = query.limitToFirst(limit)
     }
