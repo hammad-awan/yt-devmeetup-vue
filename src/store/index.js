@@ -22,11 +22,9 @@ export default new Vuex.Store({
       const user = await authenticationController.signIn(payload)
       commit('setUser', user)
     },
-    autoSignIn({ commit }, payload) {
-      commit('setUser', {
-        id: payload.uid,
-        registeredMeetups: []
-      })
+    async autoSignIn({ commit }, payload) {
+      const user = await authenticationController.autoSignIn(payload.uid)
+      commit('setUser', user)
     },
     async logout({ commit }) {
       await authenticationController.logout()

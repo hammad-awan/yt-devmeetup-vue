@@ -38,7 +38,7 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn class="primary">Register</v-btn>
+            <app-registerDialog :meetupId="meetup.id"></app-registerDialog>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -49,6 +49,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import meetupsDao from '@/persistence/firebase/meetupsDao'
+import registerDialog from './RegisterDialog'
 
 export default {
   props: ['id'],
@@ -58,6 +59,9 @@ export default {
       error: null,
       loading: false
     }
+  },
+  components: {
+    'app-registerDialog': registerDialog
   },
   methods: {
     async getMeetup() {

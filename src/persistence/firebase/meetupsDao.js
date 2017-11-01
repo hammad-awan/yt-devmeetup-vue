@@ -16,22 +16,29 @@ function transformFirebaseMeetup(meetupData) {
 }
 
 export default {
-  getMeetups(limit) {
+  async getMeetups(limit) {
     let query = firebase
       .database()
       .ref('meetups')
-      .orderByChild('creatorId')
     if (limit) {
       query = query.limitToFirst(limit)
     }
     const meetups = []
-    query.on('child_added', data => {
-      const meetup = transformFirebaseMeetup(data)
+    const data = await query.once('value')
+    data.forEach(child => {
+      const meetup = transformFirebaseMeetup(child)
       meetups.push(meetup)
     })
-    return meetups.sort((m1, m2) => {
-      return m1.date > m2.date
+    meetups.sort((m1, m2) => {
+      if (m1.date > m2.date) {
+        return 1
+      } else if (m1.date < m2.date) {
+        return -1
+      } else {
+        return 0
+      }
     })
+    return meetups
   },
   async saveMeetup(meetupData) {
     let meetup = {
